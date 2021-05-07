@@ -13,22 +13,22 @@ const format = time => {
 const Timer = ({ time, autostart, onTick, step}) => {
     const [ seconds, setSeconds ] = useState(time);
     const [ isActive, setIsActive ] = useState(autostart);
-    const [ stepTimer] = useState(step);
 
     useEffect(() => {
         if (seconds > 0 && isActive) {
             let timer = null;
             if( isActive === true ) {
                 timer = setInterval(() =>{
-                    setSeconds( seconds - stepTimer);
-                }, 1000*stepTimer);
+                    setSeconds( seconds - step);
+                }, 1000*step);
                 onTick(seconds);
             }
+
             return () => {
                 clearInterval(timer);
             }
-        } 
-    }, [seconds, stepTimer, isActive, step, onTick]);
+        }
+    }, [seconds, isActive, step, onTick]);
 
     return (
         <div>
