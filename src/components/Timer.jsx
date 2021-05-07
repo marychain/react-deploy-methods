@@ -10,47 +10,31 @@ const format = time => {
     return `${minutes}:${seconds}`;
 };
 
-const Timer = ({ time, step }) => {
-    const [ seconds, setSeconds ] = useState(5);
-    const [ secondsTimerTwo, setSecondsTimerTwo ] = useState(time);
-    const [ isActive, setIsActive ] = useState(false);
-    const [ isActiveTwo, setIsActiveTwo ] = useState(true);
+const Timer = ({ time, autostart, onTick, step}) => {
+    const [ seconds, setSeconds ] = useState(time);
+    const [ isActive, setIsActive ] = useState(autostart);
+    const [ stepTimer] = useState(step);
 
     useEffect(() => {
         if (seconds > 0 && isActive) {
-            const timer = setInterval(() =>{
-                setSeconds( seconds - 1);
-            }, 1000)
+            let timer = null;
+            if( isActive === true ) {
+                timer = setInterval(() =>{
+                    setSeconds( seconds - stepTimer);
+                }, 1000*stepTimer);
+                onTick(seconds);
+            }
             return () => {
                 clearInterval(timer);
             }
-        } else if(seconds === 0) {
-            console.log('Час вийшов!');
-            }
-    }, [ seconds, isActive ]);
-
-    useEffect(() => {
-        if (secondsTimerTwo > 0 && isActiveTwo) {
-            const timerTwo = setInterval(() =>{
-                setSecondsTimerTwo( secondsTimerTwo - step);
-            }, 2000)
-            console.log("Залишилось часу: " + (secondsTimerTwo * 1000) + ' мс')
-
-            return () => {
-                clearInterval(timerTwo);
-            }
         } 
-    }, [ secondsTimerTwo, isActiveTwo, step ]);
+    }, [seconds, stepTimer, isActive, step, onTick]);
 
     return (
         <div>
             <div className='timer'>
                 <time className='time'>{format(seconds)}</time>
                 <button onClick={() => setIsActive(!isActive) }>{isActive ? 'stop' : 'start'}</button>
-            </div>
-            <div className='timer'>
-                <time className='time'>{format(secondsTimerTwo)}</time>
-                <button onClick={() => setIsActiveTwo(!isActiveTwo)}>{isActiveTwo ? 'stop' : 'start'}</button>
             </div>
         </div>
     );
